@@ -2,6 +2,7 @@ package com.InfoSec.dynamic_password.global.security.auth.oauth2.handler;
 
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.GeneratedToken;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.util.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -33,7 +36,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String name = oAuth2User.getAttribute("name");
         String mobile = oAuth2User.getAttribute("mobile");
 
-        //일단 회원가입 여부 따지지 않는다. 추후에 로직 변경
         boolean isExist = Boolean.TRUE.equals(oAuth2User.getAttribute("isExist"));
 
         String role = oAuth2User.getAuthorities().stream()
@@ -42,20 +44,24 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .getAuthority();
 
         if(isExist) {
-            GeneratedToken token = jwtUtil.generateToken(email,role);
+            GeneratedToken token = jwtUtil.generateToken(name, email, mobile, role);
             log.info("jwtToken = {}", token.getAccessToken());
-
             response.setHeader("Authorization", "Bearer " + token.getAccessToken());
-            getRedirectStrategy().sendRedirect(request, response, "/home");
+            getRedirectStrategy().sendRedirect(request, response, "/loginSuccess");
         }
+
         if(!isExist) {
-            String targetUrl = UriComponentsBuilder.fromUriString("/signup")
-                    .queryParam("email", email)
-                    .queryParam("provider", provider)
-                    .queryParam("name", name)
-                    .queryParam("mobile", mobile)
-                    .toUriString();
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            Map<String, String> payload = Map.of(
+                    "redirectUrl", "/sign-up",
+                    "email", email,
+                    "provider", provider,
+                    "name", name,
+                    "mobile", mobile
+            );
+            new ObjectMapper().writeValue(response.getWriter(), payload);
         }
 
     }

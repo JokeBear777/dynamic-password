@@ -1,5 +1,5 @@
 app:
   jwt:
     issuer: DynamicPassword # 발급자 정보
-    secret_key: SGVsbG9Xb3JsZA== #${JWT_SECRET_KEY} # 터미널에서 `openssl rand -hex 64` 로 생성
+    secret_key: ${JWT_SECRET_KEY}
     expired: 1800000 # 만료시간
