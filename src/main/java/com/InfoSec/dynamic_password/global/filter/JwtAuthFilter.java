@@ -36,9 +36,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("doFilterInternal start");
 
         String path = request.getServletPath();
-
+        log.info("Request path: {}", path);
         // 모두 허용 URL 처리
-        if (path.equals("/") || path.startsWith("/login")) {
+        if (path.equals("/") || path.startsWith("/login") ||  path.startsWith("/error")
+                || path.startsWith("/oauth2-login") || path.startsWith("/sign-up")) {
             filterChain.doFilter(request, response);
             log.info("permitAll");
             return;
@@ -49,6 +50,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (!StringUtils.hasText(accessToken)) {
             filterChain.doFilter(request, response);
             return;
+        }
+
+        if (accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7).trim();
         }
 
         if (!jwtUtil.verifyToken(accessToken)) {
@@ -62,8 +67,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             SecurityUserDto userDto = SecurityUserDto.builder()
                     .userId(findMember.getMemberId())
-                    .email(findMember.getMemberEmail())
-                    .mobile(findMember.getMemberMobile())
+                    .email(findMember.getEmail())
+                    .mobile(findMember.getMobile())
                     .role(findMember.getMemberRole())
                     .build();
 
@@ -77,6 +82,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     public Authentication getAuthentication(SecurityUserDto member) {
         return new UsernamePasswordAuthenticationToken(member, "",
-                List.of(new SimpleGrantedAuthority(member.getRole())));
+                List.of(new SimpleGrantedAuthority(member.getRole().toString())));
     }
 }

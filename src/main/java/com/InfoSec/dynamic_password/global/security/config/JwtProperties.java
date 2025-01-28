@@ -19,6 +19,9 @@ public class JwtProperties {
 
     public Key getSecretKey() {
         byte[] keyBytes = DatatypeConverter.parseBase64Binary(secretKey);
+        if (keyBytes == null || keyBytes.length <32) {
+            throw new IllegalArgumentException("Secret key length is incorrect");
+        }
         return new SecretKeySpec(keyBytes, SignatureAlgorithm   .HS256.getJcaName());
     }
 }

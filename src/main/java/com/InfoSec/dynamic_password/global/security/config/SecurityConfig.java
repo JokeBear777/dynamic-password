@@ -37,14 +37,22 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/favicon.ico", "/css/**", "/js/**", "/images/**", "/error").permitAll()
-                        .requestMatchers("/oauth2/**", "/oauth2-login").permitAll()
-                        .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
+                        .requestMatchers(
+                                "/favicon.ico",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()            // 정적 리소스 & Swagger UI
+                        .requestMatchers("/oauth2/**").permitAll()   // OAuth2 인증 엔드포인트
+                        .requestMatchers("/", "/login/**","sign-up").permitAll()
+                        //.requestMatchers("/sign-up/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
                 .oauth2Login(outh -> outh
-                        .loginPage("/oauth2-login")
+                        //.loginPage("/oauth2-login")
                         .failureHandler(oAuth2LoginFailureHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정해준다.
                         .successHandler(oAuth2LoginSuccessHandler) // OAuth2 로그인 성공시 처리할 핸들러를 지정해준다.
                         .userInfoEndpoint(userInfo -> userInfo

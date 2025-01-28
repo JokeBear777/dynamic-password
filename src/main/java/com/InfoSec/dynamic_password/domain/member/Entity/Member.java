@@ -1,6 +1,7 @@
 package com.InfoSec.dynamic_password.domain.member.Entity;
 
 
+import com.InfoSec.dynamic_password.domain.member.type.MemberRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,20 +23,18 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
-    @Column(name = "member_email", nullable = false)
-    private String memberEmail;
+    @Column(name = "email", nullable = false)
+    private String email;
 
-    @Column(name = "description" ,nullable = true)
-    private String description;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "member_name", nullable = false)
-    private String memberName;
+    @Column(name = "mobile", nullable = false)
+    private String mobile;
 
-    @Column(name = "member_mobile", nullable = false)
-    private String memberMobile;
-
-    @Column(name = "member_role", nullable = false)
-    private String memberRole;
+    @Column(name="member_role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MemberRole memberRole;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

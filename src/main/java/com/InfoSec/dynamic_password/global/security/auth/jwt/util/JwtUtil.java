@@ -2,10 +2,7 @@ package com.InfoSec.dynamic_password.global.security.auth.jwt.util;
 
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.GeneratedToken;
 import com.InfoSec.dynamic_password.global.security.config.JwtProperties;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +25,17 @@ public class JwtUtil {
         secretKey = jwtProperties.getSecretKey();
     }
 
-    public GeneratedToken generateToken(String email, String role) {
-        String accessToken = generateAccessToken(email, role);
+    public GeneratedToken generateToken(String name, String email,String mobile ,String role) {
+        String accessToken = generateAccessToken(name, email, mobile, role);
 
         return new GeneratedToken(accessToken);
     }
 
-    public String generateAccessToken(String email, String role) {
+    public String generateAccessToken(String name,String email,String mobile ,String role) {
         long tokenPeriod = jwtProperties.getExpired();
         Claims claims = Jwts.claims().setSubject(email);
+        claims.put("name", name);
+        claims.put("mobile", mobile);
         claims.put("role", "ROLE_" + role);
 
         Date now = new Date();
@@ -50,15 +49,29 @@ public class JwtUtil {
     }
 
     public boolean verifyToken(String token) {
+        log.info("String token = {}", token);
         try{
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build().parseClaimsJws(token);
-
+            log.info(claims.getBody().toString());
             return claims.getBody()
                     .getExpiration()
                     .after(new Date());
-        } catch (Exception e) {
+        } catch (ExpiredJwtException e) {
+            log.error("JWT expired: {}", e.getMessage());
+            return false;
+        } catch (io.jsonwebtoken.security.SecurityException e) {
+            log.error("Invalid JWT signature: {}", e.getMessage());
+            return false;
+        } catch (MalformedJwtException e) {
+            log.error("Malformed JWT: {}", e.getMessage());
+            return false;
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT: {}", e.getMessage());
+            return false;
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
             return false;
         }
     }
