@@ -9,11 +9,16 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StatusResponseDto {
     private Integer status;
+    private String message;
     private Object data;
 
     public StatusResponseDto(Integer status) {
         this.status = status;
     }
+
+    public StatusResponseDto(Integer status, String message) {}
+
+    public StatusResponseDto(Integer status, Object data) {}
 
     public static StatusResponseDto addStatus(Integer status) {
         return new StatusResponseDto(status);
@@ -24,7 +29,10 @@ public class StatusResponseDto {
     }
 
     public static StatusResponseDto success(Object data) {
-        return new StatusResponseDto(200, data);
+        return new StatusResponseDto(200,null ,data);
     }
 
+    public static StatusResponseDto success(Object data, String message) {return new StatusResponseDto(200, message, data);}
+
+    public static StatusResponseDto success(String message) {return new StatusResponseDto(200, message);}
 }

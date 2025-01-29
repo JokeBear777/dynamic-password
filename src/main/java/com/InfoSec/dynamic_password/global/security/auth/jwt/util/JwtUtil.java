@@ -25,17 +25,15 @@ public class JwtUtil {
         secretKey = jwtProperties.getSecretKey();
     }
 
-    public GeneratedToken generateToken(String name, String email,String mobile ,String role) {
-        String accessToken = generateAccessToken(name, email, mobile, role);
+    public GeneratedToken generateToken(String email ,String role) {
+        String accessToken = generateAccessToken(email, role);
 
         return new GeneratedToken(accessToken);
     }
 
-    public String generateAccessToken(String name,String email,String mobile ,String role) {
+    public String generateAccessToken(String email,String role) {
         long tokenPeriod = jwtProperties.getExpired();
         Claims claims = Jwts.claims().setSubject(email);
-        claims.put("name", name);
-        claims.put("mobile", mobile);
         claims.put("role", "ROLE_" + role);
 
         Date now = new Date();
