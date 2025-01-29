@@ -45,7 +45,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()            // 정적 리소스 & Swagger UI
-                        .requestMatchers("/oauth2/**").permitAll()   // OAuth2 인증 엔드포인트
+                        .requestMatchers("/oauth2/**", "/auth/**").permitAll()   // OAuth2 인증 엔드포인트
                         .requestMatchers("/", "/login/**","sign-up").permitAll()
                         //.requestMatchers("/sign-up/**").permitAll()
                         .anyRequest().authenticated()

@@ -34,11 +34,10 @@ public class SignUprController {
     })
     @PostMapping()
     public ResponseEntity<?> signUp (
-            @AuthenticationPrincipal DefaultOAuth2User oAuth2User,
             @Valid @RequestBody SignUpRequestDto signUpRequestDto
     ) {
-        memberService.signUp(oAuth2User, signUpRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        memberService.signUp(signUpRequestDto);
+        return ResponseEntity.ok(ResponseEntity.status(HttpStatus.CREATED).build());
     }
 
 

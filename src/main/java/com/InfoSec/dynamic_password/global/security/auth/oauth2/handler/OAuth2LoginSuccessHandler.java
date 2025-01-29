@@ -44,7 +44,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .getAuthority();
 
         if(isExist) {
-            GeneratedToken token = jwtUtil.generateToken(name, email, mobile, role);
+            GeneratedToken token = jwtUtil.generateToken(email, role);
             log.info("jwtToken = {}", token.getAccessToken());
             response.setHeader("Authorization", "Bearer " + token.getAccessToken());
             getRedirectStrategy().sendRedirect(request, response, "/loginSuccess");

@@ -22,13 +22,14 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
-    public void signUp(OAuth2User oAuth2User,
+    public void signUp(
                        SignUpRequestDto signUpRequestDto
     ) {
         Member member = Member.builder()
-                .email(oAuth2User.getAttribute("email"))
+                .email(signUpRequestDto.getEmail())
                 .name(signUpRequestDto.getName())
-                .mobile(oAuth2User.getAttribute("mobile"))
+                .mobile(signUpRequestDto.getMobile())
+                .memberRole(MemberRole.USER)
                 .build();
 
         memberRepository.save(member);
