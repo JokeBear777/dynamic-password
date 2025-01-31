@@ -16,7 +16,6 @@ import java.util.Date;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ToString
 public class JwtUtil {
     private final JwtProperties jwtProperties;
     //private final RefreshTokenService tokenService; //애플리케이션의 의도에 맞게 리프레시 토큰은 넣지 않음, 추후 넣을 수도 있음

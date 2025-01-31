@@ -6,8 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class StatusResponseDto extends BaseResponseDto{
-    private Integer status;
-    private Object data;
 
     public StatusResponseDto(Integer status) {
         super(status);
