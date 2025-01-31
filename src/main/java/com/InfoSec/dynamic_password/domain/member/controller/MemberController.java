@@ -1,8 +1,8 @@
 package com.InfoSec.dynamic_password.domain.member.controller;
 
 import com.InfoSec.dynamic_password.domain.member.service.MemberService;
-import com.InfoSec.dynamic_password.global.dto.RedirectResponseData;
-import com.InfoSec.dynamic_password.global.dto.StatusResponseDto;
+import com.InfoSec.dynamic_password.global.utils.dto.RedirectResponseData;
+import com.InfoSec.dynamic_password.global.utils.dto.StatusResponseDto;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.SecurityUserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -3,7 +3,7 @@ package com.InfoSec.dynamic_password.domain.auth.controller;
 import com.InfoSec.dynamic_password.domain.auth.dto.JwtRequestDto;
 import com.InfoSec.dynamic_password.domain.auth.dto.JwtResponseDto;
 import com.InfoSec.dynamic_password.domain.auth.service.AuthService;
-import com.InfoSec.dynamic_password.global.dto.StatusResponseDto;
+import com.InfoSec.dynamic_password.global.utils.dto.StatusResponseDto;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.GeneratedToken;
 import com.InfoSec.dynamic_password.global.security.config.JwtProperties;
 import jakarta.validation.Valid;

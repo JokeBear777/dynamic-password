@@ -5,6 +5,7 @@ import com.InfoSec.dynamic_password.global.security.config.JwtProperties;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.Date;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@ToString
 public class JwtUtil {
     private final JwtProperties jwtProperties;
     //private final RefreshTokenService tokenService; //애플리케이션의 의도에 맞게 리프레시 토큰은 넣지 않음, 추후 넣을 수도 있음

@@ -33,7 +33,7 @@ public class AuthService {
         }
 
         GeneratedToken token = jwtUtil.generateToken(email, MemberRole.GUEST.toString());
-        log.info("Generated token: {}", token);
+        log.info("Generated guest token: {}", token);
         return token;
     };
 

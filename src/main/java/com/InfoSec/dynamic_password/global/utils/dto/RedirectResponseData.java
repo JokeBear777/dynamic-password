@@ -1,4 +1,4 @@
-package com.InfoSec.dynamic_password.global.dto;
+package com.InfoSec.dynamic_password.global.utils.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
