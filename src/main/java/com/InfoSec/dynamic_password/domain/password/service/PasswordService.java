@@ -196,4 +196,28 @@ public class PasswordService {
         return passwordListResponseDtoList;
     }
 
+    @Transactional(readOnly = true)
+    public PasswordResponseDto getPasswordByPasswordId(
+            Long passwordId,
+            SecurityUserDto securityUserDto
+    ) {
+        Password password = passwordRepository.findById(passwordId)
+                .orElseThrow(() -> new NotFoundException("저장된 비밀번호가 없습니다"));
+        if (!password.getMemberId().equals(securityUserDto.getUserId())) {
+            throw new AccessDeniedException("다른 사용자의 비밀번호를 조회할 수 없습니다.");
+        }
+
+        //조회시 IP와 접속시간 저장하는 로직 추가 예정
+
+        return new PasswordResponseDto(
+                password.getSiteName(),
+                password.getSiteAddress(),
+                password.getPassword(),
+                password.getLoginId(),
+                password.getUpdatedAt(),
+                password.getCreatedAt()
+        );
+
+    }
+
 }

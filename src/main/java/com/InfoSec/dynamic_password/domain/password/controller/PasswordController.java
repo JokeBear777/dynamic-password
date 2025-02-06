@@ -1,9 +1,6 @@
 package com.InfoSec.dynamic_password.domain.password.controller;
 
-import com.InfoSec.dynamic_password.domain.password.dto.PasswordListResponseDto;
-import com.InfoSec.dynamic_password.domain.password.dto.RequestGeneratePasswordDto;
-import com.InfoSec.dynamic_password.domain.password.dto.RequestSavePasswordDto;
-import com.InfoSec.dynamic_password.domain.password.dto.UpdatePasswordDto;
+import com.InfoSec.dynamic_password.domain.password.dto.*;
 import com.InfoSec.dynamic_password.domain.password.service.PasswordService;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.SecurityUserDto;
 import com.InfoSec.dynamic_password.global.utils.dto.StatusResponseDto;
@@ -65,14 +62,25 @@ public class PasswordController {
         return ResponseEntity.ok(StatusResponseDto.success());
     }
 
-    @GetMapping("/{member_id}")
+    @GetMapping("/list")
     public ResponseEntity<?> GetPasswordListByMemberId (
-            @Valid @PathVariable("member_id") Long member_id,
             @AuthenticationPrincipal SecurityUserDto securityUserDto
     ) {
         List<PasswordListResponseDto> passwordListResponseDtoList = passwordService
                 .getPasswordListByMemberId(securityUserDto);
         return ResponseEntity.ok(StatusResponseDto.success(passwordListResponseDtoList));
+    }
+
+    @GetMapping("/list/{password_id}")
+    public ResponseEntity<?> GetPasswordByPasswordId (
+            @PathVariable("password_id") Long passwordId,
+            @AuthenticationPrincipal SecurityUserDto securityUserDto
+    ) {
+        PasswordResponseDto passwordResponseDto = passwordService.getPasswordByPasswordId(
+                passwordId,
+                securityUserDto
+        );
+        return ResponseEntity.ok(StatusResponseDto.success(passwordResponseDto));
     }
 
 
