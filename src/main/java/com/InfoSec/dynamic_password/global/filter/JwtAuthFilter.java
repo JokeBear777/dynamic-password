@@ -1,6 +1,6 @@
 package com.InfoSec.dynamic_password.global.filter;
 
-import com.InfoSec.dynamic_password.domain.member.Entity.Member;
+import com.InfoSec.dynamic_password.domain.member.entity.Member;
 import com.InfoSec.dynamic_password.domain.member.service.MemberService;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.SecurityUserDto;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.util.JwtUtil;
@@ -64,7 +64,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String email = jwtUtil.getUid(accessToken);
             Member findMember =  memberService.findByEmail(email)
                     .orElseThrow(IllegalStateException::new);
-
             SecurityUserDto userDto = SecurityUserDto.builder()
                     .userId(findMember.getMemberId())
                     .email(findMember.getEmail())
@@ -74,6 +73,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             Authentication auth = getAuthentication(userDto);
             SecurityContextHolder.getContext().setAuthentication(auth);
+            log.info("verification is success");
         }
 
         filterChain.doFilter(request, response);

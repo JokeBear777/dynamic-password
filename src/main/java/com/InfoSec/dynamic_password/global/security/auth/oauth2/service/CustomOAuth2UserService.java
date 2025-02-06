@@ -1,6 +1,6 @@
 package com.InfoSec.dynamic_password.global.security.auth.oauth2.service;
 
-import com.InfoSec.dynamic_password.domain.member.Entity.Member;
+import com.InfoSec.dynamic_password.domain.member.entity.Member;
 import com.InfoSec.dynamic_password.domain.member.service.MemberService;
 import com.InfoSec.dynamic_password.domain.member.type.MemberRole;
 import com.InfoSec.dynamic_password.global.security.auth.oauth2.adapter.OAuth2AttributeAdapter;

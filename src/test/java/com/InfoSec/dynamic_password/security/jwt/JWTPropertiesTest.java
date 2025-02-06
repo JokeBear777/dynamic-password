@@ -13,7 +13,7 @@ class JWTPropertiesTest {
     private JwtProperties jwtProperties;
 
     @Test
-    void jwt_설정값_불러오기_성공_테스트() {
+    void jwt_test() {
         // given
         // when
         System.out.println("jwtProperties.getIssuer() = " + jwtProperties.getIssuer());

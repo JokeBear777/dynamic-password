@@ -1,7 +1,7 @@
 package com.InfoSec.dynamic_password.domain.auth.service;
 
 import com.InfoSec.dynamic_password.domain.auth.dto.JwtRequestDto;
-import com.InfoSec.dynamic_password.domain.member.Entity.Member;
+import com.InfoSec.dynamic_password.domain.member.entity.Member;
 import com.InfoSec.dynamic_password.domain.member.service.MemberService;
 import com.InfoSec.dynamic_password.domain.member.type.MemberRole;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.GeneratedToken;
@@ -33,7 +33,7 @@ public class AuthService {
         }
 
         GeneratedToken token = jwtUtil.generateToken(email, MemberRole.GUEST.toString());
-        log.info("Generated token: {}", token);
+        log.info("Generated guest token: {}", token);
         return token;
     };
 

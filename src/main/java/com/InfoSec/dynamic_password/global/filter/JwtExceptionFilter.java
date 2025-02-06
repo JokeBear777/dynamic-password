@@ -1,7 +1,7 @@
 package com.InfoSec.dynamic_password.global.filter;
 
 
-import com.InfoSec.dynamic_password.global.dto.StatusResponseDto;
+import com.InfoSec.dynamic_password.global.utils.dto.StatusResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;

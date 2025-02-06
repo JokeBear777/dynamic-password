@@ -1,12 +1,11 @@
 package com.InfoSec.dynamic_password.domain.member.service;
 
-import com.InfoSec.dynamic_password.domain.member.Entity.Member;
+import com.InfoSec.dynamic_password.domain.member.entity.Member;
 import com.InfoSec.dynamic_password.domain.member.dto.SignUpRequestDto;
 import com.InfoSec.dynamic_password.domain.member.repository.MemberRepository;
 import com.InfoSec.dynamic_password.domain.member.type.MemberRole;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.SecurityUserDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
