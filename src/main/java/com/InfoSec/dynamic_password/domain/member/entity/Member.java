@@ -1,4 +1,4 @@
-package com.InfoSec.dynamic_password.domain.member.Entity;
+package com.InfoSec.dynamic_password.domain.member.entity;
 
 
 import com.InfoSec.dynamic_password.domain.member.type.MemberRole;

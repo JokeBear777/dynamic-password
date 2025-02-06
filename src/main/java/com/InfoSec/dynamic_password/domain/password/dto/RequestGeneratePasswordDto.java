@@ -16,23 +16,23 @@ public class RequestGeneratePasswordDto {
     private Integer maxSize;
 
     @NotBlank(message = "대문자 허용여부는 필수입니다.")
-    private Boolean requiredUpperCase;
+    private Boolean requireUpperCase;
 
     @NotBlank(message = "소문자 허용여부는 필수입니다.")
-    private Boolean requiredLowerCase;
+    private Boolean requireLowerCase;
 
     @NotBlank(message = "숫자 허용여부는 필수입니다.")
-    private Boolean requiredNumbers;
+    private Boolean requireNumbers;
 
     @NotBlank(message = "특수문자 허용여부는 필수입니다.")
-    private Boolean requiredSpecialCharacters;
+    private Boolean requireSpecialCharacters;
 
     @Size(max = 255, message = "특수문자 종류는 최대 255자까지 허용됩니다.")
     private String allowedSpecialCharacters;
 
     @AssertTrue(message = "특수문자가 허용되면, 가능한 특수문자 종류 입력은 필수입니다.")
     public boolean isAllowedSpecialCharactersValid() {
-        return !requiredSpecialCharacters
+        return !requireSpecialCharacters
                 || (allowedSpecialCharacters != null && !allowedSpecialCharacters.isEmpty());
     }
 }
