@@ -1,5 +1,7 @@
 package com.InfoSec.dynamic_password.domain.password.service;
 
+import com.InfoSec.dynamic_password.domain.member.entity.Member;
+import com.InfoSec.dynamic_password.domain.member.repository.MemberRepository;
 import com.InfoSec.dynamic_password.domain.password.dto.*;
 import com.InfoSec.dynamic_password.domain.password.entity.Password;
 import com.InfoSec.dynamic_password.domain.password.repository.PasswordRepository;
@@ -30,6 +32,7 @@ public class PasswordService {
     private final EncryptionService encryptionService;
     private final PasswordRepository passwordRepository;
     private final DomainExtractor domainExtractor;
+    private final MemberRepository memberRepository;
 
     private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
@@ -90,6 +93,8 @@ public class PasswordService {
             SecurityUserDto securityUserDto)
     {
         Long memberId = securityUserDto.getUserId();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(()-> new NotFoundException("Cannot find member with id: " + memberId));
         String siteName = requestSavePasswordDto.getSiteName();
         String siteAddress = null;
 
@@ -114,7 +119,7 @@ public class PasswordService {
 
         passwordRepository.save(
                 Password.builder()
-                        .memberId(memberId)
+                        .member(member)
                         .siteName(siteName)
                         .siteAddress(siteAddress)
                         .password(password)
@@ -129,7 +134,7 @@ public class PasswordService {
         Password password = passwordRepository.findById(passwordId)
                 .orElseThrow(() -> new NotFoundException("저장된 비밀번호가 없습니다"));
 
-        if (!password.getMemberId().equals(securityUserDto.getUserId())) {
+        if (!password.getMember().getMemberId().equals(securityUserDto.getUserId())) {
             throw new AccessDeniedException("다른 사용자의 비밀번호를 삭제할 수 없습니다.");
         }
 
@@ -145,7 +150,7 @@ public class PasswordService {
         Password password = passwordRepository.findById(passwordId)
                 .orElseThrow(() -> new NotFoundException("저장된 비밀번호가 없습니다"));
 
-        if (!password.getMemberId().equals(securityUserDto.getUserId())) {
+        if (!password.getMember().getMemberId().equals(securityUserDto.getUserId())) {
             throw new AccessDeniedException("다른 사용자의 비밀번호를 수정할 수 없습니다.");
         }
 
@@ -203,7 +208,7 @@ public class PasswordService {
     ) {
         Password password = passwordRepository.findById(passwordId)
                 .orElseThrow(() -> new NotFoundException("저장된 비밀번호가 없습니다"));
-        if (!password.getMemberId().equals(securityUserDto.getUserId())) {
+        if (!password.getMember().getMemberId().equals(securityUserDto.getUserId())) {
             throw new AccessDeniedException("다른 사용자의 비밀번호를 조회할 수 없습니다.");
         }
 

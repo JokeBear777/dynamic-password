@@ -1,5 +1,6 @@
 package com.InfoSec.dynamic_password.domain.password.entity;
 
+import com.InfoSec.dynamic_password.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,8 +24,9 @@ public class Password {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long passwordId;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false, updatable = false)
+    private Member member;
 
     @Column(name = "site_name", nullable = false)
     private String siteName;
