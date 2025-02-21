@@ -24,6 +24,26 @@ public class MemberService {
     public void signUp(
                        SignUpRequestDto signUpRequestDto
     ) {
+        if (signUpRequestDto.getEmail().isEmpty()) {
+            throw new NotFoundException("Email is empty");
+        }
+
+        if (signUpRequestDto.getName().isEmpty()) {
+            throw new NotFoundException("Name is empty");
+        }
+
+        if(signUpRequestDto.getMobile().isEmpty()) {
+            throw new NotFoundException("Mobile number is empty");
+        }
+
+        if (!isValidEmail(signUpRequestDto.getEmail())) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+
+        if (findByEmail(signUpRequestDto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email is already in use");
+        }
+
         Member member = Member.builder()
                 .email(signUpRequestDto.getEmail())
                 .name(signUpRequestDto.getName())
@@ -43,5 +63,10 @@ public class MemberService {
         //
 
         member.setMemberRole(MemberRole.INACTIVE);
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return email.matches(emailRegex);
     }
 }
