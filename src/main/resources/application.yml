@@ -6,6 +6,7 @@ spring:
   config:
     import:
       - classpath:/app/jwt/application-jwt.yml
+      - classpath:/app/redis/application-redis-local.yml
   security:
     oauth2:
       client:
