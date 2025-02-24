@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      #password: foobared
+      timeout: 5000
+
+app:
+  jwt:
+    issuer: DynamicPassword # 발급자 정보
+    secret_key: ${JWT_SECRET_KEY}
+    expired: 1800000 # 만료시간
