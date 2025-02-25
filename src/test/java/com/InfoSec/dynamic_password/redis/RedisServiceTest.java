@@ -17,7 +17,7 @@ public class RedisServiceTest {
     @Test
     public void TestRedisOperation() {
         redisTemplateService.saveData("testKey", "testValue");
-        String value = redisTemplateService.getData("testKey");
+        String value = redisTemplateService.getData("testKey", String.class);
 
         Assertions.assertEquals("testValue", value);
     }
