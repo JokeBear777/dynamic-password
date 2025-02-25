@@ -14,32 +14,30 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisTemplateService{
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public void saveData(String key, String value) {
+    public <T> void saveData(String key, T value) {
         try {
             redisTemplate.opsForValue().set(key, value);
-        }
-        catch (DataAccessException e) {
-            throw new RedisOperationException("Redis save failed",e);
+        } catch (Exception e) {
+            throw new RedisOperationException(String.format(" save key: %s failed", key), e);
         }
     }
 
-    public void saveDataWithTTL(String key, String value, long timeout, TimeUnit unit) {
+    public <T> void saveDataWithTTL(String key, T value, long timeout, TimeUnit unit) {
         try {
             redisTemplate.opsForValue().set(key, value, timeout, unit);
-        }
-        catch (DataAccessException e) {
-            throw new RedisOperationException("Redis save failed",e);
+        } catch (Exception e) {
+            throw new RedisOperationException(String.format(" save with TTL key: %s failed", key), e);
         }
     }
 
-    public String getData(String key) {
+    public <T> T getData(String key, Class<T> clazz) {
         try {
-            return redisTemplate.opsForValue().get(key);
-        }
-        catch (Exception e) {
-            throw new RedisOperationException("Redis get failed",e);
+            Object data = redisTemplate.opsForValue().get(key);
+            return clazz.cast(data);
+        } catch (Exception e) {
+            throw new RedisOperationException(String.format(" get key: %s failed", key), e);
         }
     }
 
@@ -47,7 +45,7 @@ public class RedisTemplateService{
         try {
             redisTemplate.delete(key);
         } catch (Exception e) {
-            throw new RedisOperationException("Redis delete failed", e);
+            throw new RedisOperationException(String.format(" delete key: %s failed", key), e);
         }
     }
 
@@ -55,7 +53,7 @@ public class RedisTemplateService{
         try {
             return redisTemplate.getExpire(key);
         } catch (Exception e) {
-            throw new RedisOperationException("Redis get TTL failed", e);
+            throw new RedisOperationException(String.format(" get ttl key: %s failed", key), e);
         }
     }
 
@@ -63,7 +61,7 @@ public class RedisTemplateService{
         try {
             redisTemplate.expire(key, timeout, unit);
         } catch (Exception e) {
-            throw new RedisOperationException("Redis set TTL failed", e);
+            throw new RedisOperationException(String.format(" set key expiration: %s failed", key), e);
         }
     }
 
@@ -71,7 +69,7 @@ public class RedisTemplateService{
         try {
             return Boolean.TRUE.equals(redisTemplate.hasKey(key));
         } catch (Exception e) {
-            throw new RedisOperationException("Redis key existence check failed", e);
+            throw new RedisOperationException(String.format(" key exists: %s failed", key), e);
         }
     }
 
@@ -79,7 +77,7 @@ public class RedisTemplateService{
         try {
             return redisTemplate.keys(pattern);
         } catch (Exception e) {
-            throw new RedisOperationException("Redis key search failed", e);
+            throw new RedisOperationException(String.format(" key exists by pattern : %s failed", pattern), e);
         }
     }
 
@@ -90,16 +88,15 @@ public class RedisTemplateService{
                 redisTemplate.delete(keys);
             }
         } catch (Exception e) {
-            throw new RedisOperationException("Redis key deletion by pattern failed", e);
+            throw new RedisOperationException(String.format(" key delete by pattern : %s failed", pattern), e);
         }
     }
 
     public void flushAll() {
         try {
-            Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection().flushAll();
-        }
-        catch (Exception e) {
-            throw new RedisOperationException("Redis flush failed",e);
+            redisTemplate.getConnectionFactory().getConnection().flushAll();
+        } catch (Exception e) {
+            throw new RedisOperationException(" flush failed", e);
         }
     }
 }

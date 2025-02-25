@@ -4,21 +4,40 @@ import com.InfoSec.dynamic_password.domain.member.entity.Member;
 import com.InfoSec.dynamic_password.domain.member.dto.SignUpRequestDto;
 import com.InfoSec.dynamic_password.domain.member.repository.MemberRepository;
 import com.InfoSec.dynamic_password.domain.member.type.MemberRole;
+import com.InfoSec.dynamic_password.global.redis.service.RedisTemplateService;
 import com.InfoSec.dynamic_password.global.security.auth.jwt.dto.SecurityUserDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RedisTemplateService redisTemplateService;
 
     public Optional<Member> findByEmail(String email) {
-        return memberRepository.findByEmail(email);
+        String redisKey = "member:" + email;
+
+        Member redisMember = redisTemplateService.getData(redisKey, Member.class);
+        if(redisMember != null) {
+            log.info("[Test] redisKey : {} value is present ", redisKey);
+            return Optional.of(redisMember);
+        }
+
+        Optional<Member> memberOptional = memberRepository.findByEmail(email);
+
+        memberOptional.ifPresent(member->
+                redisTemplateService.saveDataWithTTL(redisKey, member, 60, TimeUnit.MINUTES)
+        );
+
+        return memberOptional;
     }
 
     public void signUp(
