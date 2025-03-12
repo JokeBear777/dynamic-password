@@ -1,5 +1,10 @@
 package com.InfoSec.dynamic_password.global.redis.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,8 +42,31 @@ public class RedisPropertiesConfig {
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfBaseType(Object.class) // 모든 클래스 허용 (보안 측면 주의)
+                // .allowIfSubType("com.") // 특정 패키지로 제한 가능
+                .build();
+
+        ObjectMapper.DefaultTypeResolverBuilder resolverBuilder = new ObjectMapper.DefaultTypeResolverBuilder(ObjectMapper.DefaultTyping.NON_FINAL, ptv);
+        resolverBuilder.init(JsonTypeInfo.Id.CLASS, null)
+                .inclusion(JsonTypeInfo.As.PROPERTY)
+                .typeProperty("@class");
+
+        objectMapper.setDefaultTyping(resolverBuilder);
+
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+
+
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
+        redisTemplate.setValueSerializer(serializer);
+        redisTemplate.setHashValueSerializer(serializer);
+
         return redisTemplate;
     }
 
