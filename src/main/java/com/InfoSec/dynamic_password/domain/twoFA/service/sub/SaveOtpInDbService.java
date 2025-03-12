@@ -2,12 +2,15 @@ package com.InfoSec.dynamic_password.domain.twoFA.service.sub;
 
 import com.InfoSec.dynamic_password.domain.member.entity.Member;
 import com.InfoSec.dynamic_password.domain.member.repository.MemberRepository;
+import com.InfoSec.dynamic_password.domain.notification.service.AlertPubService;
+import com.InfoSec.dynamic_password.domain.notification.service.AlertStorageService;
 import com.InfoSec.dynamic_password.domain.notification.service.EmailService;
 import com.InfoSec.dynamic_password.domain.twoFA.entity.OtpSecretKey;
 import com.InfoSec.dynamic_password.domain.twoFA.repository.OtpSecretKeyRepository;
 import com.InfoSec.dynamic_password.domain.twoFA.service.TotpServiceTemplate;
 import com.InfoSec.dynamic_password.global.redis.service.RedisTemplateService;
 import com.InfoSec.dynamic_password.global.utils.service.AesUtil;
+import com.InfoSec.dynamic_password.global.utils.service.RequestUtil;
 import com.InfoSec.dynamic_password.global.utils.service.TotpUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,8 @@ public class SaveOtpInDbService extends TotpServiceTemplate {
     private final OtpSecretKeyRepository otpSecretKeyRepository;
     private final RedisTemplateService redisTemplateService;
     private final EmailService emailService;
+    private final AlertStorageService alertStorageService;
+    private final RequestUtil requestUtil;
 
     @Override
     public void saveOtpSecretKey(Long memberId, String plainOtpSecretKey) {
@@ -71,10 +76,7 @@ public class SaveOtpInDbService extends TotpServiceTemplate {
             int newFailCount = failCount + 1;
             //log.info("[TEST] new fail count = {}", newFailCount);
             if(newFailCount >= 5) {
-                emailService.sendOtpFailEmail(memberId);
-                redisTemplateService.saveDataWithTTL(blackListKey, 1, 1800, TimeUnit.SECONDS);
-                throw new RuntimeException("OTP authentication failed over 5 times in 10 minutes." +
-                        " Authentication is blocked for 30 minutes.");
+                handleFailOtpAfterMaxAttempts(memberId,blackListKey,requestUtil.getClientIp() );
             }
             //long remainTime = redisTemplateService.getTTL(redisKey);
             if(newFailCount <= 1) {
@@ -90,5 +92,15 @@ public class SaveOtpInDbService extends TotpServiceTemplate {
         log.info("Otp Code Verified");
         String otpSuccessKey = "otp:success:" + memberId;
         redisTemplateService.saveDataWithTTL(otpSuccessKey, 1, 1800, TimeUnit.SECONDS);
+    }
+
+    private void handleFailOtpAfterMaxAttempts(Long memberId, String blackListKey, String ip) {
+        Long currentTime = System.currentTimeMillis();
+        emailService.sendOtpFailEmail(memberId);    
+        alertStorageService.saveOTPAlertToHash(memberId, ip);
+        redisTemplateService.saveDataWithTTL(blackListKey, 1, 1800, TimeUnit.SECONDS);
+
+        throw new RuntimeException("OTP authentication failed over 5 times in 10 minutes." +
+                " Authentication is blocked for 30 minutes.");
     }
 }
