@@ -132,12 +132,5 @@ HIBP(Have I Been Pwned) 등의 유출 데이터베이스를 활용한다.
 
 ---
 
-## 8. 기술 스택
 
-- Backend: Spring Boot, Spring Security, OAuth2 Client
-- Auth: Naver OAuth2, TOTP
-- Crypto: RSA/ECC, AES256-GCM, Android Keystore, Secure Enclave
-- Infra: AWS KMS, AWS RDS, AWS EC2
-- Client: Android / iOS / Web (확장 가능)
 
----
